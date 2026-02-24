@@ -1,0 +1,18 @@
+# Pastas de compilação do .NET
+bin/
+obj/
+
+# Configurações do JetBrains Rider
+.idea/
+*.sln.DotSettings.user
+
+# Arquivos específicos do macOS
+.DS_Store
+
+# Arquivos de segredos e logs locais
+logs/
+appsettings.Development.json
+
+# Publicação e pacotes
+publish/
+.nuget/

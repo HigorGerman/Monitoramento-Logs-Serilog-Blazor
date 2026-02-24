@@ -1,0 +1,72 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.Extensions.Logging
+@inject ILogger<Home> Logger
+
+<PageTitle>Trabalho Serilog - Higor Germano</PageTitle>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4">Sistema de Monitoramento de Gastos</h1>
+        <p class="lead">Demonstração de Logging Estruturado com Serilog e MySQL</p>
+        <hr />
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white text-center">
+                    Painel de Controle
+                </div>
+                <div class="card-body d-grid gap-3">
+                    <button class="btn btn-success btn-lg" @onclick="RegistrarGastoSucesso">
+                        <i class="bi bi-check-circle"></i> Registrar Gasto (INFO)
+                    </button>
+
+                    <button class="btn btn-danger btn-lg" @onclick="SimularFalhaCritica">
+                        <i class="bi bi-exclamation-triangle"></i> Simular Falha (ERROR)
+                    </button>
+                </div>
+                <div class="card-footer text-center">
+                    @if (!string.IsNullOrEmpty(status))
+                    {
+                        <div class="alert @statusClass animate__animated animate__fadeIn mt-3">
+                            @status
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string status = "";
+    private string statusClass = "";
+
+    private void RegistrarGastoSucesso()
+    {
+        // Log de Informação - O campo Exception ficará NULL no MySQL
+        Logger.LogInformation("Higor realizou um registro de gasto manual com sucesso.");
+        
+        status = "✅ Evento INFORMATION gravado no MySQL!";
+        statusClass = "alert-success";
+    }
+
+    private void SimularFalhaCritica()
+    {
+        try
+        {
+            // Forçamos uma exceção para preencher a coluna 'Exception'
+            throw new InvalidOperationException("Limite de crédito excedido ou erro de processamento.");
+        }
+        catch (Exception ex)
+        {
+            // Passamos 'ex' como primeiro parâmetro para o Serilog capturar o Stack Trace
+            Logger.LogError(ex, "Falha crítica detectada no sistema de gastos do Higor.");
+            
+            status = "❌ Evento ERROR gravado com detalhes da Exception!";
+            statusClass = "alert-danger";
+        }
+    }
+}
